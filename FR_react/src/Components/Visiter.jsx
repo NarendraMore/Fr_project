@@ -22,7 +22,7 @@ const Visiter = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/getVisitorReport`;
+        const apiUrl = `http://192.168.1.10:8001/getVisitorReport`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error("Network was not ok");
@@ -41,7 +41,7 @@ const Visiter = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/getVisitorRegistration`;
+        const apiUrl = `http://192.168.1.10:8001/getVisitorRegistration`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error("Network was not ok");
@@ -93,7 +93,7 @@ const Visiter = () => {
       setLoading(true);
       const id = visiter;
       console.log(id, "visiter ID for delete");
-      const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/deleteVisitorRegistration/${id}`;
+      const apiUrl = `http://192.168.1.10:8001/deleteVisitorRegistration/${id}`;
   
       const response = await fetch(apiUrl, {
         method: "DELETE",

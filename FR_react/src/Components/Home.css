@@ -12,7 +12,9 @@
     padding-right: 5%;
   }
 
-
+  .nav-link-custom {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
 
   .totalEmp,
   .presentEmp,

@@ -94,7 +94,8 @@ const VisiterRagister = () => {
   const handleSubmit = async (event) => {
     if (!formValidate()) return;
     event.preventDefault();
-    const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/visitorRegistration`;
+    // const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/visitorRegistration`;
+    const apiUrl = `http://192.168.1.10:8001/visitorRegistration`;
     const formData = new FormData();
     formData.append("visiterId", visiterId);
     formData.append("name", name);

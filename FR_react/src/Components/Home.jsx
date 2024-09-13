@@ -21,7 +21,8 @@ const Home = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/employeeCount`;
+        // const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/employeeCount`;
+        const apiUrl = `http://192.168.1.10:8001/employeeCount`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error("Network was not ok");
@@ -36,7 +37,8 @@ const Home = () => {
     fetchData();
     const GetData = async () => {
       try {
-        const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/presentEmployeesCount`;
+        // const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/presentEmployeesCount`;
+        const apiUrl = `http://192.168.1.10:8001/presentEmployeesCount`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error("Network was not ok");
@@ -51,7 +53,7 @@ const Home = () => {
     GetData();
     const GetDataLate = async () => {
       try {
-        const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/lateEmployeesCount`;
+        const apiUrl = `http://192.168.1.10:8001/lateEmployeesCount`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error("Network was not ok");
@@ -66,7 +68,7 @@ const Home = () => {
     GetDataLate();
     const GetDataAbsent = async () => {
       try {
-        const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/absentEmployeesCount`;
+        const apiUrl = `http://192.168.1.10:8001/absentEmployeesCount`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error("Network was not ok");
@@ -81,7 +83,7 @@ const Home = () => {
     GetDataAbsent();
     const getLatestEntry = async () => {
       try {
-        const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/getAttendanceReportNew`;
+        const apiUrl = `http://192.168.1.10:8001/getAttendanceReportNew`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error("Network was not ok");
@@ -129,7 +131,7 @@ const Home = () => {
     getLatestEntry();
     const fetchAttendanceData = async () => {
       try {
-        const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/getAttendanceReport`;
+        const apiUrl = `http://192.168.1.10:8001/getAttendanceReport`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error("Network was not ok");
@@ -193,7 +195,7 @@ const Home = () => {
         ) : null}
         <div className="px-5 mt-3">
           <div className="d-flex">
-            <h3 className="justify-content-left">Dashboard</h3>
+            <h4 className="justify-content-left nav-link-custom">Dashboard</h4>
           </div>
           <hr style={{ marginTop: '5px' }}></hr>
         </div>

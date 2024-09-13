@@ -12,6 +12,19 @@ ul li:hover {
 
 .nav-pills .nav-link {
   width: 100%; /* Full width for better responsiveness */
+  
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.navName{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.nav-link.active {
+  background-color: #17a2b8; /* Highlight color */
+  font-weight: bold;
 }
 
 .logo-img {
@@ -21,7 +34,9 @@ ul li:hover {
   margin-left: -0.5rem;
   margin-right: 0.188rem;
 }
-
+.nav-link-custom {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
 .OutletDiv {
   overflow-y: auto;
   height: calc(100vh - 60px); /* Adjusted for header height */
@@ -43,3 +58,49 @@ ul li:hover {
     display: none !important;
   }
 }
+/* Dashboard.css */
+.projectTitle {
+  padding: 1rem;
+}
+
+.notification-container {
+  position: relative;
+}
+
+.notification-dropdown {
+  width: 100%;
+  max-width: 300px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .projectTitle h4 {
+    font-size: 1rem;
+  }
+
+  .notification-container i.bi-bell {
+    font-size: 1.2rem;
+  }
+
+  .notification-dropdown {
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 576px) {
+  .projectTitle h4 {
+    font-size: 0.9rem;
+  }
+
+  .notification-container i.bi-bell {
+    font-size: 1rem;
+  }
+
+  .notification-dropdown {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+

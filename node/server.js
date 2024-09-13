@@ -2,28 +2,56 @@ const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const moment = require('moment');
-const socketIO = require('socket.io');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cron = require('node-cron');
+const WebSocket = require('ws'); // Use ws instead of socket.io
+
 const RegistrationRouter = require('./routers/registration');
 const ReportRouter = require('./routers/report');
 const VisitorRegistrationRouter = require('./routers/visitorRegistration');
-const VisitorReportRouter = require('./routers/visitorReport')
+const VisitorReportRouter = require('./routers/visitorReport');
 
 const app = express();
 const port = process.env.PORT || 8000;
 
 const server = http.createServer(app);
 
-// Initialize Socket.io
-const io = socketIO(server);
+// Initialize WebSocket server
+const wss = new WebSocket.Server({ server });
+
+// Handle WebSocket connections
+wss.on('connection', (ws) => {
+  console.log('New WebSocket client connected');
+
+  // Send a welcome message to the client
+  ws.send(JSON.stringify({ message: 'Welcome to the notification server!' }));
+
+  // Handle messages from the client (if needed)
+  ws.on('message', (message) => {
+    console.log(`Received message from client: ${message}`);
+  });
+
+  // Handle client disconnection
+  ws.on('close', () => {
+    console.log('Client disconnected');
+  });
+
+  // Utility function to send notifications to all connected clients
+  const sendNotification = (data) => {
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify(data));
+      }
+    });
+  };
+
+  // This will trigger when a report is generated during the cron job
+  ws.sendNotification = sendNotification;
+});
 
 // Connect to your MongoDB database
-mongoose.connect('mongodb://127.0.0.1:27017/AttendanceNew', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect('mongodb://127.0.0.1:27017/AttendanceNew');
 
 const db = mongoose.connection;
 
@@ -205,6 +233,6 @@ app.use(VisitorRegistrationRouter);
 app.use(VisitorReportRouter);
 
 // Start the server
-server.listen(port, () => {
-  console.log(`Server is up on port ${port}`);
-});
+// server.listen(port, () => {
+//   console.log(`Server is up on port ${port}`);
+// });

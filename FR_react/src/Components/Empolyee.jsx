@@ -69,7 +69,7 @@ const Empolyee = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/getEmpRegistration`;
+        const apiUrl = `http://192.168.1.10:8001/getEmpRegistration`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error("Network was not ok");
@@ -135,7 +135,8 @@ const Empolyee = () => {
       setLoading(true);
       const id = employee;
       console.log(id, "employee ID for delete");
-      const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/deleteEmpRegistration/${id}`;
+      const apiUrl = `http://192.168.1.10:8001/deleteEmpRegistration/${id}`;
+      // const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/deleteEmpRegistration/${id}`;
   
       const response = await fetch(apiUrl, {
         method: "DELETE",

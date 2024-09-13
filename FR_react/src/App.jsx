@@ -20,6 +20,10 @@ import AddCategory from "./Components/AddCategory";
 import Leave from "./Components/Leave";
 import Visiter from "./Components/Visiter";
 import VisiterRagister from "./Components/VisiterRagister";
+import Weapon from "./Components/Weapon";
+import Fight from "./Components/Fight";
+import Fire from "./Components/Fire";
+
 function App() {
   return (
     <BrowserRouter>
@@ -60,6 +64,18 @@ function App() {
           <Route
             path="/dashboard/addCategory"
             element={<AddCategory></AddCategory>}
+          ></Route>
+          <Route
+            path="/dashboard/weapon"
+            element={<Weapon></Weapon>}
+          ></Route>
+          <Route
+          path="/dashboard/fight"
+          element={<Fight></Fight>}
+          ></Route>
+           <Route
+          path="/dashboard/fire"
+          element={<Fire></Fire>}
           ></Route>
         </Route>
       </Routes>

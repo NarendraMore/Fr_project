@@ -10,55 +10,17 @@ import { ProgressSpinner } from "primereact/progressspinner";
 const Register = () => {
   const { employeeId } = useParams();
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const apiUrl = `http://192.168.1.2:8000/getEmpRegistrationById/${employeeId}`;
-  //       const response = await fetch(apiUrl);
-  //       if (!response.ok) {
-  //         throw new Error("Network was not ok");
-  //       }
-  //       const data = await response.json();
-  //       data;
-  //       setEmpId(data.empid);
-  //       setFullName(data.name);
-  //       setEmailId(data.email);
-  //       setContactNo(data.mobile);
-  //       setDepartment(data.department);
-  //       setDoj(data.joiningdate);
-  //       setFileName(data.file.filename)
-  //       if (data.file && data.file.data.data && data.file.filename) {
-  //         const reader = new FileReader();
-  //         reader.onloadend = () => {
-  //           setImage(reader.result);
-  //           setFileName(data.file.filename);
-  //         };
-  //         reader.readAsDataURL(
-  //           new Blob([Uint8Array.from(data.file.data.data)])
-  //         );
-  //         setFileName(data.file.filename);
-  //       }
-  //       console.log(data, "data from service");
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [employeeId]);
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/getEmpRegistrationById/${employeeId}`;
+        const apiUrl = `http://192.168.1.10:8001/getEmpRegistrationById/${employeeId}`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error("Network was not ok");
         }
         const data = await response.json();
+        data;
         setEmpId(data.empid);
         setFullName(data.name);
         setEmailId(data.email);
@@ -77,6 +39,7 @@ const Register = () => {
           );
           setFileName(data.file.filename);
         }
+        console.log(data, "data from service");
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -85,6 +48,43 @@ const Register = () => {
     };
     fetchData();
   }, [employeeId]);
+  
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const apiUrl = `${import.meta.env.VITE_REACT_API_URL}/getEmpRegistrationById/${employeeId}`;
+  //       const response = await fetch(apiUrl);
+  //       if (!response.ok) {
+  //         throw new Error("Network was not ok");
+  //       }
+  //       const data = await response.json();
+  //       setEmpId(data.empid);
+  //       setFullName(data.name);
+  //       setEmailId(data.email);
+  //       setContactNo(data.mobile);
+  //       setDepartment(data.department);
+  //       setDoj(data.joiningdate);
+  //       setFileName(data.file.filename)
+  //       if (data.file && data.file.data.data && data.file.filename) {
+  //         const reader = new FileReader();
+  //         reader.onloadend = () => {
+  //           setImage(reader.result);
+  //           setFileName(data.file.filename);
+  //         };
+  //         reader.readAsDataURL(
+  //           new Blob([Uint8Array.from(data.file.data.data)])
+  //         );
+  //         setFileName(data.file.filename);
+  //       }
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [employeeId]);
   
   const toast = useRef(null);
   const [empid, setEmpId] = useState("");
@@ -301,8 +301,8 @@ const handleSubmit = async (event) => {
   if (!formValidate()) return;
   
   const apiUrl = employeeId
-    ? `${import.meta.env.VITE_REACT_API_URL}/updateEmpRegistrationNew/${employeeId}`
-    : `${import.meta.env.VITE_REACT_API_URL}/empRegistration`;
+    ? `http://192.168.1.10:8001/updateEmpRegistrationNew/${employeeId}`
+    : `http://192.168.1.10:8001/empRegistration`;
 
   const formData = new FormData();
   formData.append("empid", empid);
