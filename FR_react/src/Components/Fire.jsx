@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -8,11 +7,26 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 
 const Fire = () => {
-  const [attendanceData, setAttendanceData] = useState([]);
+  const [fireData, setfireData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogVisible, setDialogVisible] = useState(false);
 
-  // Existing useEffect for fetching data
+  // Fetch data from API on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://192.168.1.10:8001/latest-event"); // Replace with your actual API URL
+        const data = await response.json();
+        setfireData(Array.isArray(data) ? data : []);
+        setLoading(false); // Stop loading once data is fetched
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false); // Stop loading in case of error
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const showDialog = () => {
     setDialogVisible(true);
@@ -47,15 +61,16 @@ const Fire = () => {
         onHide={hideDialog}
         footer={
           <div>
-            <Button label="Cancel" icon="pi pi-times" onClick={hideDialog} />
+            <Button label="Cancel" className="cancelButton1" icon="pi pi-times" onClick={hideDialog} />
             <Button
+              className="downloadButton1"
               label="Download"
               icon="pi pi-check"
               onClick={handleDownload}
             />
           </div>
         }
-        style={{ width: "90vw", maxWidth: "600px" }} // Adjust width as needed
+        style={{ width: "90vw", maxWidth: "600px" }} 
       >
         <div className="p-fluid">
           <div className="p-field">
@@ -67,7 +82,7 @@ const Fire = () => {
 
       <div className="mt-7 ml-5 mr-5">
         <DataTable
-          value={attendanceData}
+          value={fireData}
           loading={loading}
           tableStyle={{ width: "100%" }}
           scrollable

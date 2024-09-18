@@ -162,9 +162,10 @@ const NotificationComponent = () => {
 
     const fetchLatestEvent = async () => {
       try {
-        const apiUrl = process.env.REACT_APP_API_URL; // Ensure this is correctly set
-        console.log('api url',apiUrl);
-        const response = await fetch(`${apiUrl}/latest-event`);
+        // const apiUrl = process.env.REACT_APP_API_URL; 
+        // console.log('api url',apiUrl);
+        const response = await fetch(`http://192.168.1.10:8001/latest-event`);
+        console.log('response',response);
         if (response.ok) {
           const latestEvent = await response.json();
           console.log("Latest event:", latestEvent);

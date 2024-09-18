@@ -1,62 +1,69 @@
-.addCategory{
-    float:right;
-  
+.addCategory {
+  float: right;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: #f8f9fa;
+  color: #191919;
+  border: 1px solid #dee2e6;
+  border-width: 1px 0 1px 0;
+  /* padding: 1rem 1rem 1rem !important; */
+  font-weight: 600 !important;
+  border-radius: 10px 10px 0 0 !important;
+}
+
+.p-datatable.p-datatable-gridlines .p-paginator-bottom {
+  border-width: 0 1px 1px 1px;
+  background: #f8f9fa;
+}
+
+.cancelButton {
+    margin-right: 2%;
+    border: 1px solid #ccc;
+    border-radius: 50px; 
+    padding: 8px 16px;
+    background-color: transparent;
+    color: #333;
   }
-  
-  .p-datatable .p-datatable-thead > tr > th {
-    background: #f8f9fa;
-    color: #191919;
-    border: 1px solid #dee2e6;
-    border-width: 1px 0 1px 0;
-    /* padding: 1rem 1rem 1rem !important; */
-    font-weight: 600 !important;
-    border-radius: 10px 10px 0 0 !important;
+  .downloadButton{
+    border-radius: 50px;
+    padding: 8px 16px;
   }
-  
-  
-  .p-datatable.p-datatable-gridlines .p-paginator-bottom {
-    border-width: 0 1px 1px 1px;
-    background: #f8f9fa;
-  }
-  
-  
-  
-  .custom-data-table tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  
-  .custom-data-table tr:nth-child(odd) {
-    background-color: #ffffff;
-  }
-  /* Weapon.css */
+.custom-data-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.custom-data-table tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+/* Weapon.css */
 @media (max-width: 768px) {
-    .px-5 {
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
-  
-    .mt-3 {
-      margin-top: 1rem;
-    }
-  
-    .mt-7 {
-      margin-top: 1rem;
-    }
-  
-    .ml-5 {
-      margin-left: 1rem;
-    }
-  
-    .mr-5 {
-      margin-right: 1rem;
-    }
-  
-    .custom-data-table {
-      font-size: 0.875rem; /* Adjust font size for smaller screens */
-    }
-  
-    .btn-success {
-      font-size: 0.75rem; /* Adjust button font size for smaller screens */
-    }
+  .px-5 {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
-  
+
+  .mt-3 {
+    margin-top: 1rem;
+  }
+
+  .mt-7 {
+    margin-top: 1rem;
+  }
+
+  .ml-5 {
+    margin-left: 1rem;
+  }
+
+  .mr-5 {
+    margin-right: 1rem;
+  }
+
+  .custom-data-table {
+    font-size: 0.875rem; /* Adjust font size for smaller screens */
+  }
+
+  .btn-success {
+    font-size: 0.75rem; /* Adjust button font size for smaller screens */
+  }
+}

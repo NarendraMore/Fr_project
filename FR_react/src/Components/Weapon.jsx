@@ -7,12 +7,29 @@ import "./Weapon.css";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 
-const Weapons = () => {
-  const [attendanceData, setAttendanceData] = useState([]);
+const Fight = () => {
+  const [weaponData, setweaponData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogVisible, setDialogVisible] = useState(false);
 
-  // Existing useEffect for fetching data
+  // Fetch data from API
+  useEffect(() => {
+    const fetchFightData = async () => {
+      try {
+        const response = await fetch("http://192.168.1.10:8001/latest-event");
+        const data = await response.json();
+        console.log('latest data ',data); // Check the structure of the data
+        setweaponData(Array.isArray(data) ? data : []);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching fight data:", error);
+        setLoading(false);
+      }
+    };
+  
+    fetchFightData();
+  }, []);
+  
 
   const showDialog = () => {
     setDialogVisible(true);
@@ -23,7 +40,6 @@ const Weapons = () => {
   };
 
   const handleDownload = () => {
-    // Handle the download logic here
     console.log("Download report...");
     hideDialog();
   };
@@ -47,8 +63,14 @@ const Weapons = () => {
         onHide={hideDialog}
         footer={
           <div>
-            <Button label="Cancel" icon="pi pi-times" onClick={hideDialog} />
             <Button
+              label="Cancel"
+              className="cancelButton2"
+              icon="pi pi-times"
+              onClick={hideDialog}
+            />
+            <Button
+              className="downloadButton2"
               label="Download"
               icon="pi pi-check"
               onClick={handleDownload}
@@ -67,7 +89,7 @@ const Weapons = () => {
 
       <div className="mt-7 ml-5 mr-5">
         <DataTable
-          value={attendanceData}
+          value={weaponData} // Data from API
           loading={loading}
           tableStyle={{ width: "100%" }}
           scrollable
@@ -94,4 +116,4 @@ const Weapons = () => {
   );
 };
 
-export default Weapons;
+export default Fight;

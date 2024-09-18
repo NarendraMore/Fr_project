@@ -8,11 +8,27 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 
 const Fight = () => {
-  const [attendanceData, setAttendanceData] = useState([]);
+  const [fightData, setfightData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogVisible, setDialogVisible] = useState(false);
 
-  // Existing useEffect for fetching data
+  // Fetch data from API
+  useEffect(() => {
+    const fetchFightData = async () => {
+      try {
+        const response = await fetch("http://192.168.1.10:8001/latest-event");
+        const data = await response.json();
+        console.log('event data',data);
+        setfightData(Array.isArray(data) ? data : []);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching fight data:", error);
+        setLoading(false); // In case of an error, stop loading
+      }
+    };
+
+    fetchFightData(); // Call the function to fetch the data
+  }, []); // Empty dependency array ensures it runs once when component mounts
 
   const showDialog = () => {
     setDialogVisible(true);
@@ -23,7 +39,6 @@ const Fight = () => {
   };
 
   const handleDownload = () => {
-    // Handle the download logic here
     console.log("Download report...");
     hideDialog();
   };
@@ -47,8 +62,14 @@ const Fight = () => {
         onHide={hideDialog}
         footer={
           <div>
-            <Button label="Cancel" icon="pi pi-times" onClick={hideDialog} />
             <Button
+              label="Cancel"
+              className="cancelButton2"
+              icon="pi pi-times"
+              onClick={hideDialog}
+            />
+            <Button
+              className="downloadButton2"
               label="Download"
               icon="pi pi-check"
               onClick={handleDownload}
@@ -67,7 +88,7 @@ const Fight = () => {
 
       <div className="mt-7 ml-5 mr-5">
         <DataTable
-          value={attendanceData}
+          value={fightData} // Data from API
           loading={loading}
           tableStyle={{ width: "100%" }}
           scrollable
