@@ -54,12 +54,23 @@ router.post('/empRegistration', upload.single('file'), async (req, res) => {
         });
 
         const result = await registration.save();
-        res.status(200).json(result);
-    } catch (err) {
-        res.status(500).json({
-            error: err.message
-        });
-    }
+        // Emit notification message with registration details
+        req.app.get('io').emit('newRegistration', {
+          message: `A new employee with ID ${result.empid} has registered.`,
+          registrationDetails: result
+      });
+
+      // Include notification in the response
+      res.status(200).json({
+          message: `A new employee with ID ${result.empid} has registered.`,
+          registrationDetails: result
+      });
+
+  } catch (err) {
+      res.status(500).json({
+          error: err.message
+      });
+  }
 });
 
 
@@ -124,12 +135,26 @@ router.delete('/deleteEmpRegistration/:id', (req, res) => {
           if (!deletedRegistration) {
               return res.status(404).send({ error: 'Employee not found' });
           }
-          res.send({ message: 'Employee deleted successfully', deletedRegistration });
-      })
-      .catch(err => {
-          console.log('Error deleting employee:', err);
-          res.status(500).send({ error: 'Could not delete employee' });
+          // Create a notification message for the deleted employee
+      const notificationMessage = `Employee with ID "${deletedRegistration.empid}" and name "${deletedRegistration.name}" has been deleted.`;
+
+      // Emit the notification via Socket.IO to all connected clients
+      req.app.get('io').emit('deleteNotification', {
+        message: notificationMessage,
+        deletedEmployee: deletedRegistration,
       });
+
+      // Send the response with the notification message
+      res.send({
+        message: 'Employee deleted successfully',
+        notification: notificationMessage,
+        deletedRegistration
+      });
+    })
+    .catch(err => {
+      console.log('Error deleting employee:', err);
+      res.status(500).send({ error: 'Could not delete employee' });
+    });
 });
 
 
@@ -184,7 +209,21 @@ router.put('/updateEmpRegistrationNew/:id', upload.single('file'), async (req, r
     if (!registration) {
       res.status(404).send('Employee not found');
     } else {
-      res.send(registration);
+      // Create a notification message for the updated employee
+      const notificationMessage = `Employee with ID "${registration.empid}" and name "${registration.name}" has been updated.`;
+
+      // Emit the notification via Socket.IO to all connected clients
+      req.app.get('io').emit('updateNotification', {
+        message: notificationMessage,
+        updatedEmployee: registration,
+      });
+
+      // Send the response with the updated registration and notification message
+      res.send({
+        message: 'Employee updated successfully',
+        notification: notificationMessage,
+        updatedRegistration: registration
+      });
     }
   } catch (error) {
     console.error(error);
