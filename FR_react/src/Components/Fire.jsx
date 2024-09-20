@@ -10,12 +10,17 @@ const Fire = () => {
   const [fireData, setfireData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogVisible, setDialogVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   // Fetch data from API on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://192.168.1.10:8001/latest-event"); // Replace with your actual API URL
+        const event = "fire";
+        const response = await fetch(
+          `http://192.168.1.10:8001/events/${event}`
+        );
         const data = await response.json();
         setfireData(Array.isArray(data) ? data : []);
         setLoading(false); // Stop loading once data is fetched
@@ -24,6 +29,7 @@ const Fire = () => {
         setLoading(false); // Stop loading in case of error
       }
     };
+
 
     fetchData();
   }, []);
@@ -41,7 +47,10 @@ const Fire = () => {
     console.log("Download report...");
     hideDialog();
   };
-
+  const onIconClick = (rowData) => {
+    setSelectedImage(rowData.imageUrl); // Set image to be shown
+    setVisible(true); // Open dialog
+  };
   return (
     <>
       <div className="px-5 mt-3">
@@ -96,15 +105,38 @@ const Fire = () => {
           rowHover
           className="custom-data-table"
         >
-          <Column field="empid" header="Employee ID" />
-          <Column field="name" header="Employee Name" />
+     <Column
+            field="empid"
+            header="Sr.No"
+            body={(rowData, options) => options.rowIndex + 1} // Dynamic serial number
+          />
+          <Column field="event" header="Event" />
           <Column field="date" header="Date" />
-          <Column field="intime" header="Check-in" />
-          <Column field="outtime" header="Check-out" />
-          <Column field="breaktime" header="Break Time" />
-          <Column field="totaltime" header="Total Time" />
+          <Column field="time" header="Time" />
+          <Column field="cameratype" header="Camera" />
+          <Column field="location" header="Location" />
+          <Column
+            header="Action"
+            body={(rowData) => (
+              <Button
+                icon="pi pi-image"
+                className="p-button-text"
+                onClick={() => onIconClick(rowData)}
+              />
+            )}
+          />
         </DataTable>
       </div>
+      <Dialog
+        header="Image Preview"
+        visible={visible}
+        style={{ width: "50vw" }}
+        onHide={() => setVisible(false)}
+      >
+        {selectedImage && (
+          <img src={selectedImage} alt="Preview" style={{ width: "100%" }} />
+        )}{" "}
+      </Dialog>
     </>
   );
 };

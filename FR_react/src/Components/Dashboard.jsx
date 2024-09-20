@@ -4,14 +4,19 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import logo from "../assets/logo.png";
 import "./Dashboard.css";
 
-// NotificationComponent
 // const NotificationComponent = () => {
 //   const [notifications, setNotifications] = useState([]);
 //   const [isOpen, setIsOpen] = useState(false);
-//   const [notificationCount, setNotificationCount] = useState(0); // Maintain notification count
+//   const [uncheckedCount, setUncheckedCount] = useState(0);
+//   const [selectedNotification, setSelectedNotification] = useState(null);
 
 //   useEffect(() => {
-//     // WebSocket connection
+//     const savedNotifications = JSON.parse(localStorage.getItem("notifications")) || [];
+//     setNotifications(savedNotifications);
+//     setUncheckedCount(savedNotifications.filter((n) => !n.checked).length);
+//   }, []);
+
+//   useEffect(() => {
 //     const socket = new WebSocket("ws://localhost:8001");
 
 //     socket.onopen = () => {
@@ -21,24 +26,45 @@ import "./Dashboard.css";
 //     socket.onmessage = (event) => {
 //       const data = JSON.parse(event.data);
 //       console.log("Notification received:", data);
-//       setNotifications((prev) => [...prev, data]);
-//       setNotificationCount((prevCount) => prevCount + 1); // Update count
+
+//       const newNotification = {
+//         ...data,
+//         checked: false,
+//       };
+
+//       setNotifications((prev) => {
+//         const updatedNotifications = [...prev, newNotification];
+//         localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
+//         return updatedNotifications;
+//       });
+
+//       setUncheckedCount((prevCount) => prevCount + 1);
 //     };
 
 //     socket.onerror = (error) => {
 //       console.log("WebSocket error:", error);
 //     };
 
-//     // Fetch latest event from API when the component mounts
 //     const fetchLatestEvent = async () => {
 //       try {
-//         const response = await fetch("http://192.168.1.10:8001/latest-event");
+//         const response = await fetch(`http://192.168.1.10:8001/latest-event`);
 //         if (response.ok) {
 //           const latestEvent = await response.json();
 //           console.log("Latest event:", latestEvent);
-//           // Optionally add it to notifications
-//           setNotifications((prev) => [latestEvent, ...prev]);
-//           setNotificationCount((prevCount) => prevCount + 1);
+
+//           const newNotification = {
+//             message: latestEvent.message,
+//             eventDetails: latestEvent.eventDetails,
+//             checked: false,
+//           };
+
+//           setNotifications((prev) => {
+//             const updatedNotifications = [newNotification, ...prev];
+//             localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
+//             return updatedNotifications;
+//           });
+
+//           setUncheckedCount((prevCount) => prevCount + 1);
 //         } else {
 //           console.error("Failed to fetch latest event:", response.statusText);
 //         }
@@ -56,22 +82,34 @@ import "./Dashboard.css";
 
 //   const toggleDropdown = () => {
 //     setIsOpen(!isOpen);
-//     if (!isOpen) {
-//       setNotificationCount(0); // Reset count when dropdown is opened
+//   };
+
+//   const handleNotificationClick = (index) => {
+//     const clickedNotification = notifications[index];
+//     setSelectedNotification(clickedNotification);
+
+//     const updatedNotifications = notifications.filter((_, i) => i !== index);
+//     setNotifications(updatedNotifications);
+//     localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
+
+//     if (!clickedNotification.checked) {
+//       setUncheckedCount((prevCount) => prevCount - 1);
 //     }
+//   };
+
+//   const closePreview = () => {
+//     setSelectedNotification(null);
 //   };
 
 //   return (
 //     <div className="notification-container" style={{ position: "relative" }}>
-//       {/* Notification Icon */}
 //       <button
 //         className="btn btn-link text-white"
 //         onClick={toggleDropdown}
 //         style={{ position: "relative" }}
 //       >
 //         <i className="bi bi-bell" style={{ fontSize: "1.5rem" }}></i>
-//         {/* Notification count badge */}
-//         {notificationCount > 0 && (
+//         {uncheckedCount > 0 && (
 //           <span
 //             className="badge bg-danger"
 //             style={{
@@ -81,12 +119,11 @@ import "./Dashboard.css";
 //               borderRadius: "50%",
 //             }}
 //           >
-//             {notificationCount}
+//             {uncheckedCount}
 //           </span>
 //         )}
 //       </button>
 
-//       {/* Notification Dropdown */}
 //       {isOpen && (
 //         <div
 //           className="notification-dropdown bg-dark text-white p-2"
@@ -105,9 +142,14 @@ import "./Dashboard.css";
 //           <ul className="list-unstyled">
 //             {notifications.length > 0 ? (
 //               notifications.map((notification, index) => (
-//                 <li key={index} className="p-1 border-bottom">
-//                   {notification.event} -{" "}
-//                   {new Date(notification.timestamp).toLocaleTimeString()}
+//                 <li
+//                   key={index}
+//                   className={`p-1 border-bottom ${notification.checked ? "text-muted" : ""}`}
+//                   onClick={() => handleNotificationClick(index)}
+//                   style={{ cursor: "pointer",fontSize:"15px",fontFamily:"Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}
+//                 >
+//                   {notification.message} -{" "}
+//                   {/* {new Date(notification.eventDetails.timestamp).toLocaleTimeString()} */}
 //                 </li>
 //               ))
 //             ) : (
@@ -116,9 +158,42 @@ import "./Dashboard.css";
 //           </ul>
 //         </div>
 //       )}
+
+//       {selectedNotification && (
+//         <div
+//           className="notification-preview bg-light text-dark p-3"
+//           style={{
+//             position: "fixed",
+//             top: "2rem",
+//             left: "50%",
+//             transform: "translateX(-50%)",
+//             width: "300px",
+//             borderRadius: "5px",
+//             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+//             zIndex: 1000,
+//           }}
+//         >
+//           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+//             <h5>Notification Preview</h5>
+//             <button
+//               onClick={closePreview}
+//               style={{ background: "transparent", border: "none", cursor: "pointer" }}
+//             >
+//               <i className="bi bi-x" style={{ fontSize: "1.25rem", color: "black" }}></i>
+//             </button>
+//           </div>
+//           <p>{selectedNotification.message}</p>
+//           <p>
+//             Event: {selectedNotification.eventDetails.event} <br />
+//             Date: {selectedNotification.eventDetails.date} <br />
+//             Time: {selectedNotification.eventDetails.time}
+//           </p>
+//         </div>
+//       )}
 //     </div>
 //   );
 // };
+
 const NotificationComponent = () => {
   const [notifications, setNotifications] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -126,7 +201,8 @@ const NotificationComponent = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
 
   useEffect(() => {
-    const savedNotifications = JSON.parse(localStorage.getItem("notifications")) || [];
+    const savedNotifications =
+      JSON.parse(localStorage.getItem("notifications")) || [];
     setNotifications(savedNotifications);
     setUncheckedCount(savedNotifications.filter((n) => !n.checked).length);
   }, []);
@@ -149,7 +225,10 @@ const NotificationComponent = () => {
 
       setNotifications((prev) => {
         const updatedNotifications = [...prev, newNotification];
-        localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
+        localStorage.setItem(
+          "notifications",
+          JSON.stringify(updatedNotifications)
+        );
         return updatedNotifications;
       });
 
@@ -160,37 +239,58 @@ const NotificationComponent = () => {
       console.log("WebSocket error:", error);
     };
 
-    const fetchLatestEvent = async () => {
-      try {
-        // const apiUrl = process.env.REACT_APP_API_URL; 
-        // console.log('api url',apiUrl);
-        const response = await fetch(`http://192.168.1.10:8001/latest-event`);
-        console.log('response',response);
-        if (response.ok) {
-          const latestEvent = await response.json();
-          console.log("Latest event:", latestEvent);
+    // Add multiple API URLs
+    const notificationApis = [
+      `http://192.168.1.10:8001/latest-event`,
+      `http://192.168.1.10:8001/empRegistration`,
+      // `http://192.168.1.10:8001/special-events`,
+    ];
 
-          const newNotification = {
-            ...latestEvent,
+    const fetchNotificationsFromApis = async () => {
+      try {
+        // Fetch all APIs at once using Promise.all
+        const responses = await Promise.all(
+          notificationApis.map((apiUrl) =>
+            fetch(apiUrl).then((response) => {
+              if (!response.ok) {
+                throw new Error(
+                  `Error fetching from ${apiUrl}: ${response.statusText}`
+                );
+              }
+              return response.json();
+            })
+          )
+        );
+        console.log('responses',responses);
+        // Combine notifications from all APIs
+        const combinedNotifications = responses.flatMap((apiResponse) => {
+          return {
+            message: apiResponse.message,
+            eventDetails: apiResponse.eventDetails,
             checked: false,
           };
+        });
 
-          setNotifications((prev) => {
-            const updatedNotifications = [newNotification, ...prev];
-            localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
-            return updatedNotifications;
-          });
+        // Update the notifications state
+        setNotifications((prev) => {
+          const updatedNotifications = [...combinedNotifications, ...prev];
+          localStorage.setItem(
+            "notifications",
+            JSON.stringify(updatedNotifications)
+          );
+          return updatedNotifications;
+        });
 
-          setUncheckedCount((prevCount) => prevCount + 1);
-        } else {
-          console.error("Failed to fetch latest event:", response.statusText);
-        }
+        // Update unchecked count
+        setUncheckedCount(
+          (prevCount) => prevCount + combinedNotifications.length
+        );
       } catch (error) {
-        console.error("Error fetching latest event:", error);
+        console.error("Error fetching notifications:", error);
       }
     };
 
-    fetchLatestEvent();
+    fetchNotificationsFromApis();
 
     return () => {
       socket.close();
@@ -261,12 +361,14 @@ const NotificationComponent = () => {
               notifications.map((notification, index) => (
                 <li
                   key={index}
-                  className={`p-1 border-bottom ${notification.checked ? "text-muted" : ""}`}
+                  className={`p-1 border-bottom ${
+                    notification.checked ? "text-muted" : ""
+                  }`}
                   onClick={() => handleNotificationClick(index)}
                   style={{ cursor: "pointer" }}
                 >
-                  {notification.event} -{" "}
-                  {new Date(notification.timestamp).toLocaleTimeString()}
+                  {notification.message} -{" "}
+                  {/* {new Date(notification.eventDetails.timestamp).toLocaleTimeString()} */}
                 </li>
               ))
             ) : (
@@ -290,24 +392,39 @@ const NotificationComponent = () => {
             zIndex: 1000,
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <h5>Notification Preview</h5>
             <button
               onClick={closePreview}
-              style={{ background: "transparent", border: "none", cursor: "pointer" }}
+              style={{
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+              }}
             >
-              <i className="bi bi-x" style={{ fontSize: "1.25rem", color: "black" }}></i>
+              <i
+                className="bi bi-x"
+                style={{ fontSize: "1.25rem", color: "black" }}
+              ></i>
             </button>
           </div>
-          <p>{selectedNotification.event}</p>
-          <p>{new Date(selectedNotification.timestamp).toLocaleString()}</p>
+          <p>{selectedNotification.message}</p>
+          <p>
+            Event: {selectedNotification.eventDetails.event} <br />
+            Date: {selectedNotification.eventDetails.date} <br />
+            Time: {selectedNotification.eventDetails.time}
+          </p>
         </div>
       )}
     </div>
   );
 };
-
-
 
 // Dashboard component
 // const Dashboard = () => {
@@ -463,7 +580,9 @@ const Dashboard = () => {
                   className="nav-link text-white px-0 align-middle"
                 >
                   <i className="fs-4 bi-speedometer2 ms-2"></i>
-                  <span className="ms-2 d-none d-sm-inline navName">Dashboard</span>
+                  <span className="ms-2 d-none d-sm-inline navName">
+                    Dashboard
+                  </span>
                 </Link>
               </li>
               <li className="w-100">
@@ -505,36 +624,37 @@ const Dashboard = () => {
                   onClick={togglePublicSafety}
                 >
                   <i className="fs-4 bi-shield-check ms-2"></i>
-                  <span className="ms-2 d-none d-sm-inline navName">Public Safety</span>
+                  <span className="ms-2 d-none d-sm-inline navName">
+                    Public Safety
+                  </span>
                 </button>
                 {isPublicSafetyOpen && (
-                 <ul className="nav flex-column ms-2">
-                 <li className="nav-item">
-                   <Link
-                     to="/dashboard/weapon"
-                     className="nav-link text-white nav-link-custom"
-                   >
-                     Weapon Detection
-                   </Link>
-                 </li>
-                 <li className="nav-item">
-                   <Link
-                     to="/dashboard/fight"
-                     className="nav-link text-white nav-link-custom"
-                   >
-                     Fight Detection
-                   </Link>
-                 </li>
-                 <li className="nav-item">
-                   <Link
-                     to="/dashboard/fire"
-                     className="nav-link text-white nav-link-custom"
-                   >
-                     Fire Detection
-                   </Link>
-                 </li>
-               </ul>
-               
+                  <ul className="nav flex-column ms-2">
+                    <li className="nav-item">
+                      <Link
+                        to="/dashboard/weapon"
+                        className="nav-link text-white nav-link-custom"
+                      >
+                        Weapon Detection
+                      </Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link
+                        to="/dashboard/fight"
+                        className="nav-link text-white nav-link-custom"
+                      >
+                        Fight Detection
+                      </Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link
+                        to="/dashboard/fire"
+                        className="nav-link text-white nav-link-custom"
+                      >
+                        Fire Detection
+                      </Link>
+                    </li>
+                  </ul>
                 )}
               </div>
               <li className="w-100" onClick={handleLogout}>
@@ -543,7 +663,9 @@ const Dashboard = () => {
                   className="nav-link px-0 align-middle text-white"
                 >
                   <i className="fs-4 bi-power ms-2"></i>
-                  <span className="ms-2 d-none d-sm-inline navName">Logout</span>
+                  <span className="ms-2 d-none d-sm-inline navName">
+                    Logout
+                  </span>
                 </Link>
               </li>
             </ul>

@@ -36,6 +36,16 @@
 .custom-data-table tr:nth-child(odd) {
   background-color: #ffffff;
 }
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 1rem;
+  }
+  
+  .p-field {
+    margin-bottom: 1rem;
+  }
+  
 /* Weapon.css */
 @media (max-width: 768px) {
   .px-5 {
