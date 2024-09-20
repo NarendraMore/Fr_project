@@ -56,12 +56,23 @@ router.post('/visitorRegistration', upload.single('file'), async (req, res) => {
         });
 
         const result = await visitorRegistration.save();
-        res.status(200).json(result);
-    } catch (err) {
-        res.status(500).json({
-            error: err.message
-        });
-    }
+        // Emit notification message with registration details
+        req.app.get('io').emit('newRegistration', {
+          message: `A new visitor with ID ${result.visitorId} has registered.`,
+          registrationDetails: result
+      });
+
+      // Include notification in the response
+      res.status(200).json({
+          message: `A new visitor with ID ${result.visitorId} has registered.`,
+          registrationDetails: result
+      });
+
+  } catch (err) {
+      res.status(500).json({
+          error: err.message
+      });
+  }
 });
 
 
@@ -114,12 +125,26 @@ router.delete('/deleteVisitorRegistration/:id', (req, res) => {
           if (!deletedRegistration) {
               return res.status(404).send({ error: 'Visitor not found' });
           }
-          res.send({ message: 'Visitor deleted successfully', deletedRegistration });
-      })
-      .catch(err => {
-          console.log('Error deleting visitor:', err);
-          res.status(500).send({ error: 'Could not delete visitor' });
+           // Create a notification message for the deleted employee
+      const notificationMessage = `Visitor with ID "${deletedRegistration.visitorId}" and name "${deletedRegistration.name}" has been deleted.`;
+
+      // Emit the notification via Socket.IO to all connected clients
+      req.app.get('io').emit('deleteNotification', {
+        message: notificationMessage,
+        deletedVisitor: deletedRegistration,
       });
+
+      // Send the response with the notification message
+      res.send({
+        message: 'Visitor deleted successfully',
+        notification: notificationMessage,
+        deletedRegistration
+      });
+    })
+    .catch(err => {
+      console.log('Error deleting visitor:', err);
+      res.status(500).send({ error: 'Could not delete visitor' });
+    });
 });
 
 //delete visitor after exitDate---------------
@@ -202,12 +227,26 @@ router.put('/updateVisitorRegistration/:id', upload.single('file'), async (req, 
     if (!visitorRegistration) {
       res.status(404).send('Visitor not found');
     } else {
-      res.send(visitorRegistration);
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error updating Visitor');
+    // Create a notification message for the updated employee
+    const notificationMessage = `Visitor with ID "${visitorRegistration.visitorId}" and name "${visitorRegistration.name}" has been updated.`;
+
+    // Emit the notification via Socket.IO to all connected clients
+    req.app.get('io').emit('updateNotification', {
+      message: notificationMessage,
+      updatedVisitor: visitorRegistration,
+    });
+
+    // Send the response with the updated registration and notification message
+    res.send({
+      message: 'Visitor updated successfully',
+      notification: notificationMessage,
+      updatedRegistration: visitorRegistration
+    });
   }
+} catch (error) {
+  console.error(error);
+  res.status(500).send('Error updating visitor');
+}
 });
 
 
