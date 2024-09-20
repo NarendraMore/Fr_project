@@ -14,7 +14,7 @@ const Register = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const apiUrl = `http://192.168.1.10:8001/getEmpRegistrationById/${employeeId}`;
+        const apiUrl = `${import.meta.env.VITE_APP_API_URL}/getEmpRegistrationById/${employeeId}`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error("Network was not ok");
@@ -301,8 +301,8 @@ const handleSubmit = async (event) => {
   if (!formValidate()) return;
   
   const apiUrl = employeeId
-    ? `http://192.168.1.10:8001/updateEmpRegistrationNew/${employeeId}`
-    : `http://192.168.1.10:8001/empRegistration`;
+    ? `${import.meta.env.VITE_APP_API_URL}/updateEmpRegistrationNew/${employeeId}`
+    : `${import.meta.env.VITE_APP_API_URL}/empRegistration`;
 
   const formData = new FormData();
   formData.append("empid", empid);

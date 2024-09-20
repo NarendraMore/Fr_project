@@ -31,7 +31,7 @@ const Category = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = `http://192.168.1.10:8001/getAttendanceReport`;
+        const apiUrl = `${import.meta.env.VITE_APP_API_URL}/getAttendanceReport`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error("Network was not ok");

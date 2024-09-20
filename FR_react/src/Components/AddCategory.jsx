@@ -30,7 +30,7 @@ const AddCategory = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = `http://192.168.1.10:8001/getEmpRegistration`;
+        const apiUrl = `${import.meta.env.VITE_APP_API_URL}/getEmpRegistration`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error("Network was not ok");
@@ -98,7 +98,7 @@ const AddCategory = () => {
     const formattedStartDate = format(startDate, "yyyy-MM-dd");
     const formattedEndDate = format(endDate, "yyyy-MM-dd");
   
-    const apiUrl = `http://192.168.1.10:8001/download-csv?empid=${empid}&department=${department}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
+    const apiUrl = `${import.meta.env.VITE_APP_API_URL}/download-csv?empid=${empid}&department=${department}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
   
     try {
       const response = await fetch(apiUrl, { method: "GET" });

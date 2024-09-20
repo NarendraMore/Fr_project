@@ -19,7 +19,7 @@ const Fire = () => {
       try {
         const event = "fire";
         const response = await fetch(
-          `http://192.168.1.10:8001/events/${event}`
+          `${import.meta.env.VITE_APP_API_URL}/events/${event}`
         );
         const data = await response.json();
         setfireData(Array.isArray(data) ? data : []);

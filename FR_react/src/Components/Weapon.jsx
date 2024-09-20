@@ -25,7 +25,7 @@ const Fight = () => {
       try {
         const event = "weapon";
         const response = await fetch(
-          `http://192.168.1.10:8001/events/${event}`
+          `${import.meta.env.VITE_APP_API_URL}/events/${event}`
         );
         const data = await response.json();
         console.log("latest data ", data); // Check the structure of the data
@@ -68,7 +68,7 @@ const Fight = () => {
     const formattedEndTimestamp = endTimestamp.toISOString();
 
     // Construct the URL for the API call
-    const apiUrl = `http://192.168.1.10:8001/event_csv?startTimestamp=${formattedStartTimestamp}&endTimestamp=${formattedEndTimestamp}`;
+    const apiUrl = `${import.meta.env.VITE_APP_API_URL}/event_csv?startTimestamp=${formattedStartTimestamp}&endTimestamp=${formattedEndTimestamp}`;
 
     // Make the GET request to the API
     fetch(apiUrl, {
