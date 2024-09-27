@@ -22,7 +22,7 @@ const Fight = () => {
   useEffect(() => {
     const fetchFightData = async () => {
       try {
-        const event = "fighting";
+        const event = "fight";
         const response = await fetch(
           `${import.meta.env.VITE_APP_API_URL}/events/${event}`
         );
