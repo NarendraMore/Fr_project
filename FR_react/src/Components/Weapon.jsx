@@ -8,6 +8,7 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
+import axios from "axios";
 
 const Fight = () => {
   const [weaponData, setweaponData] = useState([]);
@@ -15,7 +16,7 @@ const Fight = () => {
   const [dialogVisible, setDialogVisible] = useState(false);
   const [visible, setVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedFormat, setSelectedFormat] = useState(null);
+  const [selectedweaponImage, setSelectedWeaponFormat] = useState(null);
   const [startTimestamp, setStartTimestamp] = useState(null);
   const [endTimestamp, setEndTimestamp] = useState(null);
 
@@ -28,7 +29,7 @@ const Fight = () => {
           `${import.meta.env.VITE_APP_API_URL}/events/${event}`
         );
         const data = await response.json();
-        console.log("latest data ", data); // Check the structure of the data
+        console.log("latest weapon data ", data); // Check the structure of the data
         setweaponData(Array.isArray(data) ? data : []);
         setLoading(false);
       } catch (error) {
@@ -46,16 +47,9 @@ const Fight = () => {
 
   const hideDialog = () => {
     setDialogVisible(false);
+    resetValues();
   };
 
-  // const handleDownload = () => {
-  //   console.log("Download report...");
-  //   hideDialog();
-  // };
-  const onIconClick = (rowData) => {
-    setSelectedImage(rowData.imageUrl); // Set image to be shown
-    setVisible(true); // Open dialog
-  };
   const handleDownload = () => {
     // Ensure startTimestamp and endTimestamp are available
     if (!startTimestamp || !endTimestamp) {
@@ -63,12 +57,20 @@ const Fight = () => {
       return;
     }
 
-    // Construct the timestamp in ISO format (without any unwanted encoding)
-    const formattedStartTimestamp = startTimestamp.toISOString();
-    const formattedEndTimestamp = endTimestamp.toISOString();
+    // Adjust to local time before formatting to ISO string
+    const formattedStartTimestamp = new Date(
+      startTimestamp.getTime() - startTimestamp.getTimezoneOffset() * 60000
+    ).toISOString();
+
+    const formattedEndTimestamp = new Date(
+      endTimestamp.getTime() - endTimestamp.getTimezoneOffset() * 60000
+    ).toISOString();
 
     // Construct the URL for the API call
-    const apiUrl = `${import.meta.env.VITE_APP_API_URL}/event_csv?startTimestamp=${formattedStartTimestamp}&endTimestamp=${formattedEndTimestamp}`;
+    const event ='weapon';
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_URL
+    }/event_csv?startTimestamp=${formattedStartTimestamp}&endTimestamp=${formattedEndTimestamp}&event=${event}`;
 
     // Make the GET request to the API
     fetch(apiUrl, {
@@ -89,7 +91,7 @@ const Fight = () => {
         const url = window.URL.createObjectURL(new Blob([blob]));
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", "report.csv"); // or any file name with extension based on format
+        link.setAttribute("download", "Weapon report.csv"); // or any file name with extension based on format
         document.body.appendChild(link);
         link.click();
         link.parentNode.removeChild(link); // Cleanup after the download
@@ -97,6 +99,19 @@ const Fight = () => {
       .catch((error) => {
         console.error("Download error:", error);
       });
+    resetValues();
+    setDialogVisible(false);
+  };
+
+  const onIconClick = async (rowData) => {
+    setVisible(true);
+    setSelectedWeaponFormat(
+      `${import.meta.env.VITE_APP_API_URL}/getImage/${rowData._id}`
+    );
+  };
+  const resetValues = () => {
+    setStartTimestamp(null);
+    setEndTimestamp(null);
   };
 
   return (
@@ -136,22 +151,6 @@ const Fight = () => {
       >
         <div className="p-fluid">
           <div className="grid-container">
-            {/* Dropdown for selecting report format */}
-            {/* <div className="p-field">
-              <label htmlFor="reportFormat">Select Report Format</label>
-              <Dropdown
-                id="reportFormat"
-                value={selectedFormat}
-                options={[
-                  { label: "PDF", value: "PDF" },
-                  { label: "CSV", value: "CSV" },
-                  { label: "Excel", value: "Excel" },
-                ]}
-                onChange={(e) => setSelectedFormat(e.value)}
-                placeholder="Select a format"
-              />
-            </div> */}
-
             {/* Start Timestamp */}
             <div className="p-field">
               <label htmlFor="startTimestamp">Start Timestamp</label>
@@ -178,12 +177,6 @@ const Fight = () => {
                 placeholder="Select end timestamp"
               />
             </div>
-
-            {/* Weapon Field (static value) */}
-            {/* <div className="p-field">
-              <label htmlFor="weapon">Weapon</label>
-              <InputText id="weapon" value="Weapon" readOnly />
-            </div> */}
           </div>
         </div>
       </Dialog>
@@ -228,14 +221,20 @@ const Fight = () => {
         </DataTable>
       </div>
       <Dialog
-        header="Image Preview"
+        header="Weapon Detection"
         visible={visible}
         style={{ width: "50vw" }}
         onHide={() => setVisible(false)}
       >
-        {selectedImage && (
-          <img src={selectedImage} alt="Preview" style={{ width: "100%" }} />
-        )}{" "}
+        {selectedweaponImage ? (
+          <img
+            src={selectedweaponImage}
+            alt="Preview"
+            style={{ width: "100%", height: "400px" }}
+          />
+        ) : (
+          <p>Loading image...</p>
+        )}
       </Dialog>
     </>
   );

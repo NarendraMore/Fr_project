@@ -53,7 +53,7 @@ const NotificationComponent = () => {
     // Add multiple API URLs
     const notificationApis = [
       `${import.meta.env.VITE_APP_API_URL}/latest-event`,
-      `${import.meta.env.VITE_APP_API_URL}/empRegistration`,
+      // `${import.meta.env.VITE_APP_API_URL}/empRegistration`,
     ];
     
 
@@ -210,7 +210,7 @@ const NotificationComponent = () => {
               alignItems: "center",
             }}
           >
-            <h5>Notification Preview</h5>
+            <h5>Notification</h5>
             <button
               onClick={closePreview}
               style={{
